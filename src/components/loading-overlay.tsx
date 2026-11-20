@@ -14,7 +14,6 @@ export function LoadingOverlay({ sources }: LoadingOverlayProps) {
   const allDone = sources.length > 0 && doneCount === sources.length;
 
   const [visible, setVisible] = useState(false);
-  const [fading, setFading] = useState(false);
   const showTimer = useRef<number | undefined>(undefined);
   const hideTimer = useRef<number | undefined>(undefined);
 
@@ -22,18 +21,13 @@ export function LoadingOverlay({ sources }: LoadingOverlayProps) {
     if (sources.length > 0 && !allDone) {
       // Delay showing to avoid flash on fast queries
       window.clearTimeout(hideTimer.current);
-      setFading(false);
       showTimer.current = window.setTimeout(() => setVisible(true), FADE_IN_DELAY);
     }
 
     if (allDone && visible) {
       // Fade out after a short hold
       window.clearTimeout(showTimer.current);
-      setFading(true);
-      hideTimer.current = window.setTimeout(() => {
-        setVisible(false);
-        setFading(false);
-      }, FADE_OUT_DELAY);
+      hideTimer.current = window.setTimeout(() => setVisible(false), FADE_OUT_DELAY);
     }
 
     return () => {
@@ -41,6 +35,9 @@ export function LoadingOverlay({ sources }: LoadingOverlayProps) {
       window.clearTimeout(hideTimer.current);
     };
   }, [sources, allDone, visible]);
+
+  // Fade out while holding after all sources are done.
+  const fading = allDone;
 
   if (!visible) return null;
 

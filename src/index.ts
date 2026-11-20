@@ -2,7 +2,7 @@
 export { InfraCanvas } from "./components/infra-canvas";
 export { buildInfraGraph } from "./graph-builder";
 export { layoutInfraGraph, type ViewMode } from "./layout";
-export { timeRangeToMs, TIME_RANGE_OPTIONS, type TimeRange } from "./components/toolbar/graph-toolbar";
+export { timeRangeToMs, TIME_RANGE_OPTIONS, type TimeRange } from "./lib/time-range";
 export { inferEdges } from "./relationship-rules";
 export { getResourceMeta, isContainerType, isGlobalType } from "./resource-meta";
 

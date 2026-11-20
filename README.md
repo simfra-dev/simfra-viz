@@ -1,73 +1,102 @@
-# React + TypeScript + Vite
+# simfra-viz
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive infrastructure map for AWS-compatible endpoints. simfra-viz
+queries an account through the AWS SDK, builds a graph of its resources and
+their relationships, and renders it with [React Flow](https://reactflow.dev):
+VPCs and subnets as containers, resources as nodes, inferred relationships and
+observed traffic as edges, and error summaries from CloudWatch and CloudTrail.
 
-Currently, two official plugins are available:
+It powers the infrastructure map in the [Simfra](https://github.com/simfra-dev/simfra)
+console and also works on its own against Simfra or AWS.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Coverage
 
-## React Compiler
+Collectors query EC2 (VPCs, subnets, route tables, internet and NAT gateways, security groups,
+instances), ECS, EFS,
+IAM, Lambda, RDS, S3 and CloudFront, plus CloudWatch metrics and CloudTrail
+events for traffic and errors. Relationships between resources are inferred
+from their configuration.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Install
 
-## Expanding the ESLint configuration
+The package is published to GitHub Packages. Point the `@simfra-dev` scope at
+the registry in your project's `.npmrc` and supply a GitHub token with
+`read:packages`:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```ini
+@simfra-dev:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install @simfra-dev/simfra-viz
 ```
+
+Peer dependencies: `react` and `react-dom` 19, `@tanstack/react-query` 5,
+`@xyflow/react` 12.
+
+## Usage
+
+```tsx
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  InfraCanvas,
+  buildInfraGraph,
+  timeRangeToMs,
+  type ConnectionConfig,
+  type SourceProgress,
+  type TimeRange,
+} from "@simfra-dev/simfra-viz";
+import "@simfra-dev/simfra-viz/styles";
+
+const config: ConnectionConfig = {
+  region: "us-east-1",
+  endpoint: "http://localhost:4599", // omit for AWS
+  credentials: { accessKeyId: "...", secretAccessKey: "..." },
+};
+
+export function InfraMap({ accountId }: { accountId: string }) {
+  const [timeRange, setTimeRange] = useState<TimeRange>("5m");
+  const [progress, setProgress] = useState<SourceProgress[]>([]);
+
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["infra-graph", accountId, timeRange],
+    queryFn: () => buildInfraGraph(config, accountId, timeRangeToMs(timeRange), setProgress),
+  });
+
+  return (
+    <InfraCanvas
+      graph={data ?? null}
+      isLoading={isLoading}
+      onRefresh={() => refetch()}
+      timeRange={timeRange}
+      onTimeRangeChange={setTimeRange}
+      loadingProgress={isLoading ? progress : undefined}
+    />
+  );
+}
+```
+
+The lower-level pieces (`collectEC2`, `collectIAM`, `collectLambda`,
+`collectS3`, `collectCloudFront`, `collectResourceMetrics`, `inferEdges`,
+`layoutInfraGraph`, `getResourceMeta`) are exported too.
+
+## Development
+
+```bash
+npm install
+npm run dev    # standalone viewer: enter an endpoint and credentials
+npm run lint
+npm run build  # library build into dist/
+```
+
+## License
+
+simfra-viz is part of Simfra and is licensed under the
+[Business Source License 1.1](LICENSE). Each release converts to the Apache
+License 2.0 four years after its first public distribution. See `LICENSE` for
+the Additional Use Grant.
+
+"Amazon Web Services", "AWS" and related marks are trademarks of Amazon.com,
+Inc. or its affiliates. Simfra is not affiliated with or endorsed by Amazon.

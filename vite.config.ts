@@ -15,6 +15,7 @@ export default defineConfig({
       entry: path.resolve(__dirname, 'src/index.ts'),
       formats: ['es'],
       fileName: 'index',
+      cssFileName: 'styles',
     },
     rollupOptions: {
       external: [
@@ -29,6 +30,5 @@ export default defineConfig({
         /^@aws-sdk\//,
       ],
     },
-    cssFileName: 'styles.css',
   },
 })

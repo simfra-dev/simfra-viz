@@ -1,6 +1,20 @@
 {
   "name": "@simfra-dev/simfra-viz",
-  "version": "0.2.0",
+  "version": "0.2.1",
+  "description": "Interactive infrastructure map for AWS-compatible endpoints (Simfra or AWS): topology, relationships and traffic, rendered with React Flow.",
+  "license": "BUSL-1.1",
+  "author": "Daniel Ristic",
+  "homepage": "https://github.com/simfra-dev/simfra-viz#readme",
+  "bugs": {
+    "url": "https://github.com/simfra-dev/simfra-viz/issues"
+  },
+  "keywords": [
+    "aws",
+    "simfra",
+    "infrastructure",
+    "visualization",
+    "react-flow"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -11,7 +25,11 @@
     },
     "./styles": "./dist/styles.css"
   },
-  "files": ["dist"],
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { InfraCanvas } from "../components/infra-canvas";
 import { useInfraGraph } from "../hooks/use-infra-graph";
 import type { ConnectionConfig } from "../types";
-import type { TimeRange } from "../components/toolbar/graph-toolbar";
+import type { TimeRange } from "../lib/time-range";
 
 interface GraphPageProps {
   config: ConnectionConfig | null;
