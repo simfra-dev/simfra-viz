@@ -11,22 +11,12 @@ console and also works on its own against Simfra or AWS.
 
 ## Coverage
 
-Collectors query EC2 (VPCs, subnets, route tables, internet and NAT gateways, security groups,
-instances), ECS, EFS,
-IAM, Lambda, RDS, S3 and CloudFront, plus CloudWatch metrics and CloudTrail
-events for traffic and errors. Relationships between resources are inferred
+Collectors query EC2 (VPCs, subnets, route tables, internet and NAT gateways,
+security groups, instances), ECS, EFS, IAM, Lambda, RDS, S3 and CloudFront,
+plus CloudWatch metrics and CloudTrail events for traffic and errors. Relationships between resources are inferred
 from their configuration.
 
 ## Install
-
-The package is published to GitHub Packages. Point the `@simfra-dev` scope at
-the registry in your project's `.npmrc` and supply a GitHub token with
-`read:packages`:
-
-```ini
-@simfra-dev:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
-```
 
 ```bash
 npm install @simfra-dev/simfra-viz
@@ -89,6 +79,16 @@ npm install
 npm run dev    # standalone viewer: enter an endpoint and credentials
 npm run lint
 npm run build  # library build into dist/
+```
+
+## Releasing
+
+Releases are published to npmjs.org by the `Publish` workflow through npm
+trusted publishing (no tokens). Bump the version and push the tag:
+
+```bash
+npm version patch   # or minor / major; commits and tags vX.Y.Z
+git push --follow-tags
 ```
 
 ## License
