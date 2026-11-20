@@ -83,12 +83,15 @@ npm run build  # library build into dist/
 
 ## Releasing
 
-Releases are published to npmjs.org by the `Publish` workflow through npm
-trusted publishing (no tokens). Bump the version and push the tag:
+Releases go to npmjs.org through npm trusted publishing (no tokens). Pushing a
+version tag runs the `Publish` workflow, which stages the version; a
+maintainer then approves it with 2FA:
 
 ```bash
-npm version patch   # or minor / major; commits and tags vX.Y.Z
-git push --follow-tags
+npm version patch          # or minor / major; commits and tags vX.Y.Z
+git push --follow-tags     # workflow stages the release
+npm stage list @simfra-dev/simfra-viz
+npm stage approve <stage-id>   # publishes it (asks for the 2FA code)
 ```
 
 ## License

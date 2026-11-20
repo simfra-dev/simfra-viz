@@ -17,11 +17,13 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
-      - name: Use an npm with trusted publishing (>= 11.5.1)
+      - name: Use an npm with staged publishing (npm stage, >= 12)
         run: npm install -g npm@latest
       - name: Tag matches package version
         run: test "v$(node -p 'require("./package.json").version')" = "$GITHUB_REF_NAME"
       - run: npm ci
       - run: npm run lint
       - run: npm run build
-      - run: npm publish
+      # Stages the version on npmjs.org; a maintainer releases it with
+      # `npm stage approve <stage-id>` (2FA) or on npmjs.com.
+      - run: npm stage publish .
