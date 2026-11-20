@@ -1,6 +1,6 @@
 {
   "name": "@simfra-dev/simfra-viz",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Interactive infrastructure map for AWS-compatible endpoints (Simfra or AWS): topology, relationships and traffic, rendered with React Flow.",
   "license": "BUSL-1.1",
   "author": "Daniel Ristic",
