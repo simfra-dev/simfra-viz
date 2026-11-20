@@ -31,11 +31,12 @@
     "README.md"
   ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/simfra-dev/simfra-viz.git"
+    "url": "git+https://github.com/simfra-dev/simfra-viz.git"
   },
   "scripts": {
     "dev": "vite",
